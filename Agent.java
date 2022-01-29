@@ -53,11 +53,13 @@ public class Agent {
 		Output output = new Output();
 		ArrayList<Moveset> totalMoves = new ArrayList();
 		int nodesExpanded = 0;
-		PriorityQueue<Pair<Coordinate,Integer>> frontierQueue = new PriorityQueue();
-		Pair<Coordinate, Integer> initialPair = new Pair(start, 0);
+		PriorityQueue<PairComparable> frontierQueue = new PriorityQueue();
+		PairComparable initialPair = new PairComparable(start, 0);
 		frontierQueue.add(initialPair);
 		
 		HashMap<Coordinate, ArrayList<Moveset>> came_from = new HashMap<Coordinate,ArrayList<Moveset>>();
+		HashMap<Coordinate,Facing> astar_direction = new HashMap<Coordinate,Facing>();
+		astar_direction.put(start, Facing.NORTH);		//default
 		HashMap<Coordinate, Integer> cost_so_far = new HashMap<Coordinate,Integer>();
 		cost_so_far.put(start, 0);
 		came_from.put(start, new ArrayList());
@@ -65,15 +67,21 @@ public class Agent {
 		
 		while(!frontierQueue.isEmpty())
 		{
-			Pair<Coordinate, Integer> currentPair = frontierQueue.poll();
+			options = new ArrayList<Moveset>();
+			PairComparable currentPair = frontierQueue.poll();
 			int currentX = currentPair.getKey().getX();
 			int currentY = currentPair.getKey().getY();
 			
-			if (currentPair.getKey() == goal)
+			if (currentPair.getKey().equals(goal))
 			{
 				int totalNumberOfMoves = came_from.get(currentPair.getKey()).size();
 				output.setNumberOfMoves(totalNumberOfMoves);
-				output.setTotalMoves(came_from.get(currentPair.getKey()));
+				totalMoves = came_from.get(currentPair.getKey());
+				output.setTotalMoves(totalMoves);
+				for (Moveset move : totalMoves)
+				{
+					System.out.println(move.toString());
+				}
 				break;
 			}
 			
@@ -82,13 +90,12 @@ public class Agent {
 			int finalMoveIndex = 0;
 			if(!(currentPair.getKey() == start))
 			{
-				finalMoveIndex = came_from.get(currentPair.getKey()).lastIndexOf(options);
+				finalMoveIndex = came_from.get(currentPair.getKey()).size()-1;
 			}
 			
 			// if you're not on top of the 'start' coordinate && your last move was Bash....
 			if((!(currentPair.getKey() == start)) && (came_from.get(currentPair.getKey()).get(finalMoveIndex) == Moveset.BASH))
-			{
-				options = new ArrayList<Moveset>();
+			{				
 				options.add(Moveset.FORWARD);
 			}
 			else
@@ -103,35 +110,83 @@ public class Agent {
 			for (Moveset m : options)
 			{
 				nodesExpanded++;
-				int new_cost = cost_so_far.get(currentPair.getKey()) + world.calculateGraphCost(currentPair.getKey(), m);
+				int new_cost = cost_so_far.get(currentPair.getKey());
 				Coordinate next = new Coordinate(0,0); /* calculate the next coordinate */
 				if (m == Moveset.FORWARD)
 				{
 					if (direction == Facing.NORTH)
-					{ next = new Coordinate(currentX, currentY-1);}
+					{
+						next = new Coordinate(currentX-1, currentY);
+					}	
 					else if (direction == Facing.SOUTH)
-					{ next = new Coordinate(currentX, currentY+1);}
-					else if (direction == Facing.WEST)
-					{ next = new Coordinate(currentX-1, currentY);}
-					else if (direction == Facing.EAST)
 					{ next = new Coordinate(currentX+1, currentY);}
+					else if (direction == Facing.WEST)
+					{ next = new Coordinate(currentX, currentY-1);}
+					else if (direction == Facing.EAST)
+					{ next = new Coordinate(currentX, currentY+1);}
+					
+					if(!world.insideBounds(next))
+						continue;
 				}
 				else if (m == Moveset.TURN_LEFT || m == Moveset.TURN_RIGHT)
 				{
 					next = currentPair.getKey();
+					Facing nextDirection = Facing.NORTH;
+					if (direction == Facing.NORTH)
+					{
+						if(m == Moveset.TURN_LEFT)
+							nextDirection = Facing.WEST;
+						if(m == Moveset.TURN_RIGHT)
+							nextDirection = Facing.EAST; 
+					}
+					else if (direction == Facing.EAST)
+					{
+						if(m == Moveset.TURN_LEFT)
+							nextDirection = Facing.NORTH;
+						if(m == Moveset.TURN_RIGHT)
+							nextDirection = Facing.SOUTH; 
+					}
+					else if (direction == Facing.SOUTH)
+					{
+						if(m == Moveset.TURN_LEFT)
+							nextDirection = Facing.EAST;
+						if(m == Moveset.TURN_RIGHT)
+							nextDirection = Facing.WEST; 
+					}
+					else if (direction == Facing.WEST)
+					{
+						if(m == Moveset.TURN_LEFT)
+							nextDirection = Facing.SOUTH;
+						if(m == Moveset.TURN_RIGHT)
+							nextDirection = Facing.NORTH; 
+					}
+					astar_direction.put(next, nextDirection);
 				}
 				else if (m == Moveset.BASH)
 				{
-					next = currentPair.getKey();
+					if (direction == Facing.NORTH)
+					{
+						next = new Coordinate(currentX-1, currentY);
+					}	
+					else if (direction == Facing.SOUTH)
+					{ next = new Coordinate(currentX+1, currentY);}
+					else if (direction == Facing.WEST)
+					{ next = new Coordinate(currentX, currentY-1);}
+					else if (direction == Facing.EAST)
+					{ next = new Coordinate(currentX, currentY+1);}
+					
+					if(!world.insideBounds(next))
+						continue;
 				}
 				else if (m == Moveset.DEMOLISH)
 				{
 					next = currentPair.getKey();
 				}
-						
+				
+				new_cost = new_cost + world.calculateGraphCost(next, m);	
 				// if next not in cost_so_far or new_cost < cost_so_far[next]:
 				// if ther's no cost known		of		new cost is better
-				if (!cost_so_far.containsKey(next) || new_cost < cost_so_far.get(next))
+				if (!(cost_so_far.containsKey(next)) || new_cost < cost_so_far.get(next))
 				{
 					cost_so_far.put(next, new_cost);
 					
@@ -143,9 +198,10 @@ public class Agent {
 					// add more for each heuristic
 					int priority = new_cost + heuristic_value;
 					
-					Pair<Coordinate,Integer> nextPair = new Pair(next, priority);
+					PairComparable nextPair = new PairComparable(next, priority);
 					ArrayList<Moveset> movesToCurrent = came_from.get(currentPair.getKey());
 					movesToCurrent.add(m);
+					frontierQueue.add(nextPair);
 					came_from.put(next, movesToCurrent);
 				}
 			}
@@ -176,9 +232,11 @@ public class Agent {
         									 *  Make sure that main creates the agent with the right 2 inputs
         									 */
         world.print();
-        System.out.println(world.getStart().getX() + "," + world.getStart().getY());
+        System.out.println("Start:" + world.getStart().getX() + "," + world.getStart().getY());
+        System.out.println("Goal:" + world.getGoal().getX() + "," + world.getGoal().getY());
         astar(Heuristic.H1, world.getStart(), world.getGoal());
         
         //analysis
+        System.out.println("End of Main");
     }
 }

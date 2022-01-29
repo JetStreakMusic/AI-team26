@@ -29,6 +29,15 @@ public class World {
 		return goal;
 	}
 	
+	public boolean insideBounds(Coordinate c)
+	{
+		boolean a = c.getX()>=0 && c.getY()>=0;
+		int height = worldAsArray.size();
+		int width = worldAsArray.get(0).size();
+		boolean b =  c.getY()<height;
+		boolean d = c.getX()<width;
+		return (a && b && d);
+	}
 	public void setBoard(String input)
 	{
 		try {
@@ -95,11 +104,16 @@ public class World {
 	{
 		if (m == Moveset.FORWARD)
 		{
-			//just the # on the coordinate
+			int worldx = c.getX();
+			int worldy = c.getY();
+			return worldAsArray.get(worldx).get(worldy);
 		}
 		else if (m == Moveset.TURN_LEFT || m == Moveset.TURN_RIGHT)
 		{
-			// 1/2 the # on the coordinate
+			int worldx = c.getX();
+			int worldy = c.getY();
+			int score = worldAsArray.get(worldx).get(worldy);
+			return (int) Math.ceil(score * 0.5);
 		}
 		else if (m == Moveset.BASH)
 		{
