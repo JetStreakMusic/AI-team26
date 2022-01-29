@@ -112,7 +112,7 @@ public class Agent {
         									 *  Map the Heuristic # to one of the 6 enums
         									 *  Make sure that main creates the agent with the right 2 inputs
         									 */
-        astar(Heuristic.H1, null, null);
+        astar(Heuristic.H1, world.getStart(), world.getGoal());
         
         //analysis
     }

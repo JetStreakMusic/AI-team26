@@ -7,11 +7,27 @@ import java.util.ArrayList;
 public class World {
 	
 	ArrayList<ArrayList<Integer>> worldAsArray;
-
+	Coordinate start, goal;
+	
+	public World()
+	
+	{
+		start = new Coordinate(0,0);
+		goal = new Coordinate(0,0);
+	}
+	public Coordinate getStart()
+	{
+		return start;
+	}
+	public Coordinate getGoal()
+	{
+		return goal;
+	}
+	
 	public void setBoard(String input)
 	{
 		try {
-			File file = new File(input);
+			File file = new File("config/" + input);
 			FileReader fr;
 			fr = new FileReader(file);
 
@@ -20,22 +36,33 @@ public class World {
 
 	        ArrayList<ArrayList<Integer>> map = new ArrayList<ArrayList<Integer>>();
 	        ArrayList<Integer> row = new ArrayList<Integer>();
-
+	        int r = 0;
 	        while((c = br.read()) != -1)
 	        {
 	              char character = (char) c;
 	              if(character == '\n') {
 	            	  map.add(row);
 	            	 row = new ArrayList<Integer>();
-	              } else if(Character.toUpperCase(character) == 'S' || Character.toUpperCase(character) == 'G') {
-	            	  row.add(1);
-	              } else if (character != '\t' && character != '\r') {
+	              } else if(Character.toUpperCase(character) == 'S')
+            	  {
+	            	row.add(1);
+	            	start = new Coordinate(c,r);		//column = x, row = y
+            	  }
+	            	  
+	              else if (Character.toUpperCase(character) == 'G')
+	              {
+	            	row.add(1);
+	            	goal = new Coordinate(c,r);			//column = x, row = y
+	              }
+	              else if (character != '\t' && character != '\r') {
 	            	  row.add(Character.getNumericValue(character));
 	              }
+	              r++;
 	        }
 
 	        fr.close();
 	        br.close();
+	        worldAsArray = map;
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

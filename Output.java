@@ -1,13 +1,21 @@
 import java.util.ArrayList;
 
 public class Output {
-	private int score;
-	private int numberOfMoves;
-	private int nodesExpanded;
-	private ArrayList<Moveset> totalMoves;
+	private int score = 0;
+	private int numberOfMoves = 0;
+	private int nodesExpanded = 0;
+	private ArrayList<Moveset> totalMoves = new ArrayList<Moveset>();
 	
 	public void print()
 	{
 		//print all 4 of those values ^
+		System.out.println("The score of the path found: " + score);
+		System.out.println("The number of actions required to reach the goal: " + numberOfMoves);
+		System.out.println("The number of nodes expanded: " + nodesExpanded);
+		System.out.println("The series of actions: ");
+		for (Moveset move : totalMoves)
+		{
+			System.out.println(move.toString());
+		}
 	}
 }
