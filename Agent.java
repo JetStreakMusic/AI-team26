@@ -50,6 +50,40 @@ public class Agent {
 		return 0;
 	}
 	
+	//Get the min of the vertical and horizontal distance
+	public static int heuristic2(Coordinate currCoordinate)
+	{
+		int horizontalDist = Math.abs(world.getGoal().getX()- currCoordinate.getX());
+		int verticalDist = Math.abs(world.getGoal().getY()- currCoordinate.getY());
+		return (verticalDist < horizontalDist) ? verticalDist : horizontalDist;
+	}
+	
+	//Get the max of the vertical and horizontal distance
+	public static int heuristic3(Coordinate currCoordinate)
+	{
+		int horizontalDist = Math.abs(world.getGoal().getX()- currCoordinate.getX());
+		int verticalDist = Math.abs(world.getGoal().getY()- currCoordinate.getY());
+		return (verticalDist > horizontalDist) ? verticalDist : horizontalDist;
+	}
+	
+	public static int heuristic4(Coordinate currCoordinate)
+	{
+		int horizontalDist = Math.abs(world.getGoal().getX()- currCoordinate.getX());
+		int verticalDist = Math.abs(world.getGoal().getY()- currCoordinate.getY());
+		return verticalDist + horizontalDist;
+	}
+	
+	//Get the sum of the vertical and horizontal distance
+	public static int heuristic5(Coordinate currCoordinate)
+	{
+		return 0;
+	}
+	
+	public static int heuristic6(Coordinate currCoordinate)
+	{
+		return heuristic5(currCoordinate) * 3;
+	}
+	
 	/*
 	 * astar
 	 * Should return something - probably a list of either Coordinates or moves
