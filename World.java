@@ -11,7 +11,7 @@ public class World {
 	public void setBoard(String input)
 	{
 		try {
-			File file = new File("config/" + input);
+			File file = new File(input);
 			FileReader fr;
 			fr = new FileReader(file);
 
