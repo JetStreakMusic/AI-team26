@@ -234,11 +234,35 @@ public class Agent {
 					cost_so_far.put(next, new_cost);
 					
 					int heuristic_value = 0;
-					if(h == Heuristic.H1)
-					{
-						heuristic_value = heuristic1();
-					}
+					switch (h) {
+			            case H1:
+						{
+							heuristic_value = heuristic1();
+							break;
+						}
+			            case H2:
+			            {
+							heuristic_value = heuristic2(next);
+							break;
+						}
+			            case H3:
+			            {
+							heuristic_value = heuristic3(next);
+							break;
+						}
+			            case H4:
+			            {
+							heuristic_value = heuristic4(next);
+							break;
+						}
+			            default:
+			            {
+							heuristic_value = heuristic1();
+							break;
+						}
+						
 					// add more for each heuristic
+					}
 					int priority = new_cost + heuristic_value;
 					
 					PairComparable nextPair = new PairComparable(next, priority);
