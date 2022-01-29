@@ -1,6 +1,13 @@
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.PriorityQueue;
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
+
 import javafx.util.Pair;
 
 enum Moveset {
@@ -38,9 +45,45 @@ public class Agent {
 		direction = Facing.NORTH;
 	}
 	
+	//Returns a heuristic of 0
 	public static int heuristic1()
 	{
 		return 0;
+	}
+	
+	//Get the min of the vertical and horizontal distance
+	public static int heuristic2(Coordinate currCoordinate)
+	{
+		int horizontalDist = Math.abs(world.getGoal().getX()- currCoordinate.getX());
+		int verticalDist = Math.abs(world.getGoal().getY()- currCoordinate.getY());
+		return (verticalDist < horizontalDist) ? verticalDist : horizontalDist;
+	}
+	
+	//Get the max of the vertical and horizontal distance
+	public static int heuristic3(Coordinate currCoordinate)
+	{
+		int horizontalDist = Math.abs(world.getGoal().getX()- currCoordinate.getX());
+		int verticalDist = Math.abs(world.getGoal().getY()- currCoordinate.getY());
+		return (verticalDist > horizontalDist) ? verticalDist : horizontalDist;
+	}
+	
+	//Get the sum of the vertical and horizontal distance
+	public static int heuristic4(Coordinate currCoordinate)
+	{
+		int horizontalDist = Math.abs(world.getGoal().getX()- currCoordinate.getX());
+		int verticalDist = Math.abs(world.getGoal().getY()- currCoordinate.getY());
+		return verticalDist + horizontalDist;
+	}
+	
+	public static int heuristic5(Coordinate currCoordinate)
+	{
+		return 0;
+	}
+	
+	//Heuristic 5 multiplied by 3
+	public static int heuristic6(Coordinate currCoordinate)
+	{
+		return heuristic5(currCoordinate) * 3;
 	}
 	
 	/*
@@ -239,4 +282,61 @@ public class Agent {
         //analysis
         System.out.println("End of Main");
     }
+	
+	public static void makeFile(int row, int column) {
+		Random rand = new Random();
+		
+		try {
+			String filename = "config/board" + rand.nextInt(1000) + ".txt";
+			File myObj = new File(filename);
+			if (myObj.createNewFile()) {
+		        System.out.println("File created: " + myObj.getName());
+			} else {
+				System.out.println("File already exists.");
+			}
+			generateWorld(filename, row, column);
+			
+		} catch (IOException e) {
+			System.out.println("An error occurred.");
+			e.printStackTrace();
+		}
+	}
+	
+	public static void generateWorld (String filename, int row, int column) throws IOException{
+		char[][] array = new char[row][column];
+		int randomNum;
+		
+		for (int i = 0; i < array.length; i++) {
+	        for (int j = 0; j < array[i].length; j++) {
+	        	randomNum = ThreadLocalRandom.current().nextInt(1, 10);  
+	            array[i][j] = (char) (randomNum + '0');
+	        }
+	    }
+		
+		int goalX = ThreadLocalRandom.current().nextInt(0, row);
+		int goalY = ThreadLocalRandom.current().nextInt(0, column);
+		int startX = ThreadLocalRandom.current().nextInt(0, row);
+		int startY = ThreadLocalRandom.current().nextInt(0, column);
+		
+		array[goalX][goalY] = 'G';
+		array[startX][startY] = 'S';
+		
+		BufferedWriter outputWriter = null;
+		outputWriter = new BufferedWriter(new FileWriter(filename));
+		
+		for (int i = 0; i < array.length; i++) {
+	        for (int j = 0; j < array[i].length; j++) {
+	        	if(j == array[i].length - 1) {
+	        		outputWriter.write(array[i][j]);
+	        	} else {
+	        		outputWriter.write(array[i][j]+"\t");
+	        	}
+	        }
+	        if(i != array.length - 1) {
+	        	outputWriter.newLine();
+	        }
+	    }
+		outputWriter.flush();  
+		outputWriter.close();  
+	}
 }
