@@ -45,6 +45,7 @@ public class Agent {
 		direction = Facing.NORTH;
 	}
 	
+	//Returns a heuristic of 0
 	public static int heuristic1()
 	{
 		return 0;
@@ -66,6 +67,7 @@ public class Agent {
 		return (verticalDist > horizontalDist) ? verticalDist : horizontalDist;
 	}
 	
+	//Get the sum of the vertical and horizontal distance
 	public static int heuristic4(Coordinate currCoordinate)
 	{
 		int horizontalDist = Math.abs(world.getGoal().getX()- currCoordinate.getX());
@@ -73,12 +75,12 @@ public class Agent {
 		return verticalDist + horizontalDist;
 	}
 	
-	//Get the sum of the vertical and horizontal distance
 	public static int heuristic5(Coordinate currCoordinate)
 	{
 		return 0;
 	}
 	
+	//Heuristic 5 multiplied by 3
 	public static int heuristic6(Coordinate currCoordinate)
 	{
 		return heuristic5(currCoordinate) * 3;
