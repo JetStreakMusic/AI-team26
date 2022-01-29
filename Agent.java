@@ -20,14 +20,22 @@ enum Heuristic {
     H6;
 }
 
+enum Facing {
+    NORTH,
+    EAST,
+    SOUTH,
+    WEST;
+}
+
 public class Agent {
 	private static World world;
 	private int score = 0;
+	private static Facing direction;
 	
 	public Agent()
 	{
-		this.world = new World();
-		
+		world = new World();
+		direction = Facing.NORTH;
 	}
 	
 	public static int heuristic1()
@@ -44,29 +52,82 @@ public class Agent {
 	{
 		Output output = new Output();
 		ArrayList<Moveset> totalMoves = new ArrayList();
-		
+		int nodesExpanded = 0;
 		PriorityQueue<Pair<Coordinate,Integer>> frontierQueue = new PriorityQueue();
 		Pair<Coordinate, Integer> initialPair = new Pair(start, 0);
 		frontierQueue.add(initialPair);
 		
-		HashMap<Coordinate, Moveset> came_from = new HashMap<Coordinate,Moveset>();
+		HashMap<Coordinate, ArrayList<Moveset>> came_from = new HashMap<Coordinate,ArrayList<Moveset>>();
 		HashMap<Coordinate, Integer> cost_so_far = new HashMap<Coordinate,Integer>();
-		
+		cost_so_far.put(start, 0);
+		came_from.put(start, new ArrayList());
 		ArrayList<Moveset> options = new ArrayList<Moveset>();
 		
 		while(!frontierQueue.isEmpty())
 		{
-			Pair<Coordinate, Integer> current = frontierQueue.poll();
+			Pair<Coordinate, Integer> currentPair = frontierQueue.poll();
+			int currentX = currentPair.getKey().getX();
+			int currentY = currentPair.getKey().getY();
 			
-			if (current.getKey() == goal)
+			if (currentPair.getKey() == goal)
 			{
-				//end
+				int totalNumberOfMoves = came_from.get(currentPair.getKey()).size();
+				output.setNumberOfMoves(totalNumberOfMoves);
+				output.setTotalMoves(came_from.get(currentPair.getKey()));
+				break;
+			}
+			
+			//if previous move was BASH, options = {forward}
+			//otherwise its {all 4 moves}
+			int finalMoveIndex = 0;
+			if(!(currentPair.getKey() == start))
+			{
+				finalMoveIndex = came_from.get(currentPair.getKey()).lastIndexOf(options);
+			}
+			
+			// if you're not on top of the 'start' coordinate && your last move was Bash....
+			if((!(currentPair.getKey() == start)) && (came_from.get(currentPair.getKey()).get(finalMoveIndex) == Moveset.BASH))
+			{
+				options = new ArrayList<Moveset>();
+				options.add(Moveset.FORWARD);
+			}
+			else
+			{
+				options.add(Moveset.FORWARD);
+				options.add(Moveset.TURN_LEFT);
+				options.add(Moveset.TURN_RIGHT);
+				options.add(Moveset.BASH);
+				options.add(Moveset.DEMOLISH);
 			}
 			
 			for (Moveset m : options)
 			{
-				int new_cost = cost_so_far.get(current) + world.calculateGraphCost(current.getKey(), m);
+				nodesExpanded++;
+				int new_cost = cost_so_far.get(currentPair.getKey()) + world.calculateGraphCost(currentPair.getKey(), m);
 				Coordinate next = new Coordinate(0,0); /* calculate the next coordinate */
+				if (m == Moveset.FORWARD)
+				{
+					if (direction == Facing.NORTH)
+					{ next = new Coordinate(currentX, currentY-1);}
+					else if (direction == Facing.SOUTH)
+					{ next = new Coordinate(currentX, currentY+1);}
+					else if (direction == Facing.WEST)
+					{ next = new Coordinate(currentX-1, currentY);}
+					else if (direction == Facing.EAST)
+					{ next = new Coordinate(currentX+1, currentY);}
+				}
+				else if (m == Moveset.TURN_LEFT || m == Moveset.TURN_RIGHT)
+				{
+					next = currentPair.getKey();
+				}
+				else if (m == Moveset.BASH)
+				{
+					next = currentPair.getKey();
+				}
+				else if (m == Moveset.DEMOLISH)
+				{
+					next = currentPair.getKey();
+				}
 						
 				// if next not in cost_so_far or new_cost < cost_so_far[next]:
 				// if ther's no cost known		of		new cost is better
@@ -83,7 +144,9 @@ public class Agent {
 					int priority = new_cost + heuristic_value;
 					
 					Pair<Coordinate,Integer> nextPair = new Pair(next, priority);
-					came_from.put(next, m);
+					ArrayList<Moveset> movesToCurrent = came_from.get(currentPair.getKey());
+					movesToCurrent.add(m);
+					came_from.put(next, movesToCurrent);
 				}
 			}
 			
@@ -96,7 +159,7 @@ public class Agent {
 			 * 
 			 */
 		}
-		
+		output.setNodesExpanded(nodesExpanded);
 		output.print();
 	}
 	
@@ -112,6 +175,8 @@ public class Agent {
         									 *  Map the Heuristic # to one of the 6 enums
         									 *  Make sure that main creates the agent with the right 2 inputs
         									 */
+        world.print();
+        System.out.println(world.getStart().getX() + "," + world.getStart().getY());
         astar(Heuristic.H1, world.getStart(), world.getGoal());
         
         //analysis

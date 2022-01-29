@@ -6,6 +6,19 @@ public class Output {
 	private int nodesExpanded = 0;
 	private ArrayList<Moveset> totalMoves = new ArrayList<Moveset>();
 	
+	
+	public void setNodesExpanded(int n)
+	{
+		nodesExpanded = n;
+	}
+	public void setNumberOfMoves(int n)
+	{
+		numberOfMoves = n;
+	}
+	public void setTotalMoves(ArrayList<Moveset> n)
+	{
+		totalMoves = n;
+	}
 	public void print()
 	{
 		//print all 4 of those values ^

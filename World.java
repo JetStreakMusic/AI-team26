@@ -10,11 +10,16 @@ public class World {
 	Coordinate start, goal;
 	
 	public World()
-	
 	{
 		start = new Coordinate(0,0);
 		goal = new Coordinate(0,0);
 	}
+	
+	public World(int rows, int columns)
+	{
+		//randomly generate 2D array of given size
+	}
+	
 	public Coordinate getStart()
 	{
 		return start;
@@ -33,31 +38,39 @@ public class World {
 
 			BufferedReader br= new BufferedReader(fr);
 	        int c = 0;
-
+	        
 	        ArrayList<ArrayList<Integer>> map = new ArrayList<ArrayList<Integer>>();
 	        ArrayList<Integer> row = new ArrayList<Integer>();
 	        int r = 0;
+	        int col = 0;
 	        while((c = br.read()) != -1)
 	        {
 	              char character = (char) c;
 	              if(character == '\n') {
 	            	  map.add(row);
 	            	 row = new ArrayList<Integer>();
+	            	 r++;
+	            	 col = 0;
 	              } else if(Character.toUpperCase(character) == 'S')
             	  {
 	            	row.add(1);
-	            	start = new Coordinate(c,r);		//column = x, row = y
+	            	start = new Coordinate(col, r);		//column = x, row = y
+	            	col++;
             	  }
 	            	  
 	              else if (Character.toUpperCase(character) == 'G')
 	              {
 	            	row.add(1);
-	            	goal = new Coordinate(c,r);			//column = x, row = y
+	            	goal = new Coordinate(col, r);			//column = x, row = y
+	            	col++;
 	              }
 	              else if (character != '\t' && character != '\r') {
 	            	  row.add(Character.getNumericValue(character));
 	              }
-	              r++;
+	              else
+	              {
+	            	  col++;
+	              }
 	        }
 
 	        fr.close();
