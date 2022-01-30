@@ -15,11 +15,6 @@ public class World {
 		goal = new Coordinate(0,0);
 	}
 	
-	public World(int rows, int columns)
-	{
-		//randomly generate 2D array of given size
-	}
-	
 	public Coordinate getStart()
 	{
 		return start;
@@ -63,14 +58,14 @@ public class World {
 	              } else if(Character.toUpperCase(character) == 'S')
             	  {
 	            	row.add(1);
-	            	start = new Coordinate(col, r);		//column = x, row = y
+	            	start = new Coordinate(r, col);		//row = x, col = y
 	            	col++;
             	  }
 	            	  
 	              else if (Character.toUpperCase(character) == 'G')
 	              {
 	            	row.add(1);
-	            	goal = new Coordinate(col, r);			//column = x, row = y
+	            	goal = new Coordinate(r, col);			//column = x, row = y
 	            	col++;
 	              }
 	              else if (character != '\t' && character != '\r') {

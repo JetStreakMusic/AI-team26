@@ -8,20 +8,24 @@ public class PairComparable implements Comparable<PairComparable> {
 	{
 		return myPair;
 	}
+	
 	public PairComparable(Coordinate c, int x)
 	{
 		myPair = new Pair<Coordinate, Integer>(c, x);
 	}
 
-	public int compareTo(PairComparable arg0) {
+	public int compareTo(PairComparable arg0) 
+	{
 		int a = myPair.getValue();
 		int b = arg0.getPair().getValue();
-		return 0;
+		return Integer.compare(a, b);
 	}
-	public Coordinate getKey() {
+	public Coordinate getKey() 
+	{
 		return myPair.getKey();
 	}
-	public Integer getValue() {
+	public Integer getValue() 
+	{
 		return myPair.getValue();
 	}
 }

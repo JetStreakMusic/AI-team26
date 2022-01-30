@@ -307,7 +307,8 @@ public class Agent {
         System.out.println("End of Main");
     }
 	
-	public static void makeFile(int row, int column) {
+	public static void makeFile(int row, int column) 
+	{
 		Random rand = new Random();
 		
 		try {
@@ -326,7 +327,8 @@ public class Agent {
 		}
 	}
 	
-	public static void generateWorld (String filename, int row, int column) throws IOException{
+	public static void generateWorld (String filename, int row, int column) throws IOException
+	{
 		char[][] array = new char[row][column];
 		int randomNum;
 		
