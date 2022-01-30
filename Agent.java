@@ -78,15 +78,19 @@ public class Agent {
 		return verticalDist + horizontalDist;
 	}
 	
-	public static int heuristic5(Coordinate currCoordinate)
+	public static int heuristic5(Coordinate currCoordinate, Moveset move)
 	{
-		return 0;
+		if (move != null && (move == Moveset.TURN_LEFT || move == Moveset.TURN_RIGHT)) {
+			return heuristic4(currCoordinate) + 1;
+		} else {
+			return heuristic4(currCoordinate);
+		}
 	}
 	
 	//Heuristic 5 multiplied by 3
 	public static int heuristic6(Coordinate currCoordinate)
 	{
-		return heuristic5(currCoordinate) * 3;
+		return heuristic5(currCoordinate, null) * 3;
 	}
 	
 	/*
@@ -111,6 +115,7 @@ public class Agent {
 		came_from.put(initialNode, null);
 		HashMap<Robot, Integer> cost_so_far = new HashMap<Robot,Integer>();
 		cost_so_far.put(initialNode, 0);
+		
 //		HashMap<Coordinate, ArrayList<Moveset>> came_from = new HashMap<Coordinate,ArrayList<Moveset>>();
 //		HashMap<Coordinate, Integer> cost_so_far = new HashMap<Coordinate,Integer>();
 //		cost_so_far.put(start, 0);
@@ -278,7 +283,7 @@ public class Agent {
 						}
 			            case 5:
 			            {
-							heuristic_value = heuristic5(next);
+							heuristic_value = heuristic5(next, m);
 							break;
 						}
 			            case 6:
