@@ -94,7 +94,7 @@ public class Agent {
 	 * Should return something - probably a list of either Coordinates or moves
 	 * Track the # of nodes expanded somehow (visited nodes) - counter
 	 */
-	public static void astar(Heuristic h, Coordinate start, Coordinate goal)
+	public static void astar(int h, Coordinate start, Coordinate goal)
 	{
 		Output output = new Output();
 		ArrayList<Moveset> totalMoves = new ArrayList();
@@ -256,24 +256,34 @@ public class Agent {
 					
 					int heuristic_value = 0;
 					switch (h) {
-			            case H1:
+			            case 1:
 						{
 							heuristic_value = heuristic1();
 							break;
 						}
-			            case H2:
+			            case 2:
 			            {
 							heuristic_value = heuristic2(next);
 							break;
 						}
-			            case H3:
+			            case 3:
 			            {
 							heuristic_value = heuristic3(next);
 							break;
 						}
-			            case H4:
+			            case 4:
 			            {
 							heuristic_value = heuristic4(next);
+							break;
+						}
+			            case 5:
+			            {
+							heuristic_value = heuristic5(next);
+							break;
+						}
+			            case 6:
+			            {
+							heuristic_value = heuristic6(next);
 							break;
 						}
 			            default:
@@ -331,6 +341,7 @@ public class Agent {
         
         String filename = args[0];
         world.setBoard(filename);
+        int heuristic = Integer.valueOf(args[1]);
         									/*TODO
         									 *  Map the Heuristic # to one of the 6 enums
         									 *  Make sure that main creates the agent with the right 2 inputs
@@ -338,7 +349,8 @@ public class Agent {
         world.print();
         System.out.println("Start:" + world.getStart().getX() + "," + world.getStart().getY());
         System.out.println("Goal:" + world.getGoal().getX() + "," + world.getGoal().getY());
-        astar(Heuristic.H1, world.getStart(), world.getGoal());
+        
+        astar(heuristic, world.getStart(), world.getGoal());
         
 //        makeFile(6, 6);
         
