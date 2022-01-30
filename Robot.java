@@ -75,7 +75,7 @@ public class Robot {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(coord, direction);
+		return Objects.hash(coord, direction, lastMove, priority);
 	}
 
 	@Override
@@ -88,7 +88,7 @@ public class Robot {
 			return false;
 		Robot other = (Robot) obj;
 		if(this.lastMove == null && other.lastMove == null) {return true;}
-		return coord.equals(other.coord) && direction == other.direction;
+		return coord.equals(other.coord) && direction == other.direction && lastMove == other.lastMove && priority == other.priority;
 	}
 	
 	
