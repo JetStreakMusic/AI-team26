@@ -26,11 +26,11 @@ public class World {
 	
 	public boolean insideBounds(Coordinate c)
 	{
-		boolean a = c.getX()>=0 && c.getY()>=0;
+		boolean a = c.getX() >= 0 && c.getY() >= 0;
 		int height = worldAsArray.size();
+		boolean d = c.getX()<height;
 		int width = worldAsArray.get(0).size();
-		boolean b =  c.getY()<height;
-		boolean d = c.getX()<width;
+		boolean b =  c.getY()<width;
 		return (a && b && d);
 	}
 	public void setBoard(String input)
@@ -70,11 +70,13 @@ public class World {
 	              }
 	              else if (character != '\t' && character != '\r') {
 	            	  row.add(Character.getNumericValue(character));
-	              }
-	              else
-	              {
 	            	  col++;
 	              }
+
+	        }
+	        
+	        if(row.size() != 0) {
+	        	map.add(row);
 	        }
 
 	        fr.close();

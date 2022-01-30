@@ -20,10 +20,12 @@ public class PairComparable implements Comparable<PairComparable> {
 		int b = arg0.getPair().getValue();
 		return Integer.compare(a, b);
 	}
+	
 	public Coordinate getKey() 
 	{
 		return myPair.getKey();
 	}
+	
 	public Integer getValue() 
 	{
 		return myPair.getValue();
