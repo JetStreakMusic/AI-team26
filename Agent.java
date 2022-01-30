@@ -39,7 +39,7 @@ enum Facing {
 
 public class Agent {
 	private static World world;
-	private int score = 0;
+	private static int score = 0;
 //	private static Facing direction;
 	
 	public Agent()
@@ -137,6 +137,9 @@ public class Agent {
 //				{
 //					System.out.println(move.toString());
 //				}
+				score+=100;
+				score -= cost_so_far.get(currentNode);
+				output.setScore(score);
 				break;
 			}
 			
@@ -144,7 +147,7 @@ public class Agent {
 			Moveset finalMove = Moveset.FORWARD;
 			if(currentNode.getLastMove() != null)
 			{
-				finalMove = came_from.get(currentNode).getLastMove();
+				finalMove = currentNode.getLastMove();
 			}
 			
 			// if you're not on top of the 'start' coordinate && your last move was Bash....
@@ -314,7 +317,7 @@ public class Agent {
 		Collections.reverse(path);
 		
 		output.setTotalMoves(path);
-		
+		output.setNumberOfMoves(path.size());
 		output.setNodesExpanded(nodesExpanded);
 		output.print();
 	}

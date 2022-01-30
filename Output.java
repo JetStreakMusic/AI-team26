@@ -6,7 +6,10 @@ public class Output {
 	private int nodesExpanded = 0;
 	private ArrayList<Moveset> totalMoves = new ArrayList<Moveset>();
 	
-	
+	public void setScore(int n)
+	{
+		score = n;
+	}
 	public void setNodesExpanded(int n)
 	{
 		nodesExpanded = n;
