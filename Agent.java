@@ -247,8 +247,8 @@ public class Agent {
 					continue;
 				
 				nextNode.setCoordinate(next);
-				
-				new_cost = new_cost + world.calculateGraphCost(next, m);	
+				int world_cost = world.calculateGraphCost(next, m);	
+				new_cost = new_cost + world_cost;
 				// if next not in cost_so_far or new_cost < cost_so_far[next]:
 				// if ther's no cost known		of		new cost is better
 				if (!(cost_so_far.containsKey(nextNode)) || new_cost < cost_so_far.get(nextNode))
@@ -311,7 +311,7 @@ public class Agent {
 		{
 			if(came_from.get(current) == null) {break;}
 			path.add(current.getLastMove());
-			System.out.println(current.getPriority());
+			System.out.println(current.getPriority() + "\t" + "Coordinate: " + current.getCoordinate().getX() + ","+current.getCoordinate().getY());
 			current = came_from.get(current);
 		}
 		
