@@ -311,6 +311,7 @@ public class Agent {
 		{
 			if(came_from.get(current) == null) {break;}
 			path.add(current.getLastMove());
+			System.out.println(current.getPriority());
 			current = came_from.get(current);
 		}
 		
