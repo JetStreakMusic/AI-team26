@@ -144,7 +144,7 @@ public class Agent {
 			Moveset finalMove = Moveset.FORWARD;
 			if(currentNode.getLastMove() != null)
 			{
-				finalMove = came_from.get(currentNode).getLastMove();
+				finalMove = currentNode.getLastMove();
 			}
 			
 			// if you're not on top of the 'start' coordinate && your last move was Bash....
@@ -308,6 +308,7 @@ public class Agent {
 		{
 			if(came_from.get(current) == null) {break;}
 			path.add(current.getLastMove());
+			System.out.println(current.getPriority());
 			current = came_from.get(current);
 		}
 		
