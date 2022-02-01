@@ -5,13 +5,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
-import javafx.util.Pair;
 
 enum Moveset {
     FORWARD,
@@ -103,9 +101,6 @@ public class Agent {
 		Output output = new Output();
 		ArrayList<Moveset> totalMoves = new ArrayList();
 		int nodesExpanded = 0;
-//		PriorityQueue<PairComparable> frontierQueue = new PriorityQueue();
-//		PairComparable initialPair = new PairComparable(start, 0);
-//		frontierQueue.add(initialPair);
 		
 		Queue<Robot> frontierQueue = new PriorityQueue<Robot>(10, new RobotComparator());
 		Robot initialNode = new Robot(start, 0, Facing.NORTH, null);
@@ -116,16 +111,13 @@ public class Agent {
 		HashMap<Robot, Integer> cost_so_far = new HashMap<Robot,Integer>();
 		cost_so_far.put(initialNode, 0);
 		
-//		HashMap<Coordinate, ArrayList<Moveset>> came_from = new HashMap<Coordinate,ArrayList<Moveset>>();
-//		HashMap<Coordinate, Integer> cost_so_far = new HashMap<Coordinate,Integer>();
-//		cost_so_far.put(start, 0);
-//		came_from.put(start, new ArrayList());
 		ArrayList<Moveset> options = new ArrayList<Moveset>();
 		
 		Robot endNode = new Robot();
 		
 		while(!frontierQueue.isEmpty())
 		{
+			nodesExpanded++;
 			options = new ArrayList<Moveset>();
 			Robot currentNode = frontierQueue.poll();
 			int currentX = currentNode.getCoordinate().getX();
@@ -134,14 +126,6 @@ public class Agent {
 			if (currentNode.getCoordinate().equals(goal))
 			{
 				endNode = currentNode;
-//				int totalNumberOfMoves = came_from.get(currentNode.getCoordinate()).size();
-//				output.setNumberOfMoves(totalNumberOfMoves);
-//				totalMoves = came_from.get(currentNode.getCoordinate());
-//				output.setTotalMoves(totalMoves);
-//				for (Moveset move : totalMoves)
-//				{
-//					System.out.println(move.toString());
-//				}
 				score+=100;
 				score -= cost_so_far.get(currentNode);
 				output.setScore(score);
@@ -172,7 +156,6 @@ public class Agent {
 			
 			for (Moveset m : options)
 			{
-				nodesExpanded++;
 				
 				int new_cost = cost_so_far.get(currentNode);
 				Robot nextNode = new Robot();
@@ -252,8 +235,10 @@ public class Agent {
 					continue;
 				
 				nextNode.setCoordinate(next);
+				nextNode.setLastMove(m);
 				int world_cost = world.calculateGraphCost(next, m);	
 				new_cost = new_cost + world_cost;
+
 				// if next not in cost_so_far or new_cost < cost_so_far[next]:
 				// if ther's no cost known		of		new cost is better
 				if (!(cost_so_far.containsKey(nextNode)) || new_cost < cost_so_far.get(nextNode))
@@ -302,21 +287,12 @@ public class Agent {
 					
 //					PairComparable nextPair = new PairComparable(next, priority);
 					nextNode.setPriority(priority);
-					nextNode.setLastMove(m);
 					cost_so_far.put(nextNode, new_cost);
 					frontierQueue.add(nextNode);
 					came_from.put(nextNode, currentNode);
 				}
 			}
 			
-			/*TODO 
-			 * choose the right heuristic function
-			 * A* implementation
-			 * logging the moves chosen, plus we probably want some kind of display for the moves
-			 * update the counter for # of nodes expanded
-			 * log the total # of moves
-			 * 
-			 */
 		}
 		
 		Robot current = endNode;
@@ -326,7 +302,7 @@ public class Agent {
 		{
 			if(came_from.get(current) == null) {break;}
 			path.add(current.getLastMove());
-			System.out.println(current.getPriority() + "\t" + "Coordinate: " + current.getCoordinate().getX() + ","+current.getCoordinate().getY());
+//			System.out.println(current.getPriority() + "\t" + "Coordinate: " + current.getCoordinate().getX() + ","+current.getCoordinate().getY());
 			current = came_from.get(current);
 		}
 		
@@ -347,17 +323,26 @@ public class Agent {
         String filename = args[0];
         world.setBoard(filename);
         int heuristic = Integer.valueOf(args[1]);
-        									/*TODO
-        									 *  Map the Heuristic # to one of the 6 enums
-        									 *  Make sure that main creates the agent with the right 2 inputs
-        									 */
+        								
         world.print();
         System.out.println("Start:" + world.getStart().getX() + "," + world.getStart().getY());
         System.out.println("Goal:" + world.getGoal().getX() + "," + world.getGoal().getY());
         
+        long startTime = System.nanoTime();
+        long beforeUsedMem=Runtime.getRuntime().totalMemory()-Runtime.getRuntime().freeMemory();
+        
         astar(heuristic, world.getStart(), world.getGoal());
         
-//        makeFile(6, 6);
+        long endTime   = System.nanoTime();
+        long afterUsedMem=Runtime.getRuntime().totalMemory()-Runtime.getRuntime().freeMemory();
+        
+        long totalTime = endTime - startTime;
+        long actualMemUsed=afterUsedMem-beforeUsedMem;
+        
+        System.out.println("The total time needed to run was " + (totalTime/1000000000f) + " seconds");
+        System.out.println("The total memory used was " + (actualMemUsed/Math.pow(1024, 3)) + " GB");
+        
+//        makeFile(400, 400);
         
         //analysis
         System.out.println("End of Main");
