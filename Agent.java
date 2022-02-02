@@ -15,8 +15,7 @@ enum Moveset {
     FORWARD,
     TURN_LEFT,
     TURN_RIGHT,
-    BASH,
-    DEMOLISH;
+    BASH;
 }
 
 enum Heuristic {
@@ -151,7 +150,6 @@ public class Agent {
 				options.add(Moveset.TURN_LEFT);
 				options.add(Moveset.TURN_RIGHT);
 				options.add(Moveset.BASH);
-				options.add(Moveset.DEMOLISH);
 			}
 			
 			for (Moveset m : options)
@@ -224,11 +222,6 @@ public class Agent {
 					
 					nextNode.setDirection(direction);
 					
-				}
-				else if (m == Moveset.DEMOLISH)
-				{
-					next = currentNode.getCoordinate();
-					nextNode.setDirection(direction);
 				}
 				
 				if(!(world.insideBounds(next)))
@@ -342,7 +335,7 @@ public class Agent {
         System.out.println("The total time needed to run was " + (totalTime/1000000000f) + " seconds");
         System.out.println("The total memory used was " + (actualMemUsed/Math.pow(1024, 3)) + " GB");
         
-//        makeFile(400, 400);
+//        makeFile(450, 450);
         
         //analysis
         System.out.println("End of Main");

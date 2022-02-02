@@ -116,10 +116,6 @@ public class World {
 		{
 			return 3;
 		}
-		else if (m == Moveset.DEMOLISH)
-		{
-			return 4;
-		}
 		return 0;
 	}
 }
