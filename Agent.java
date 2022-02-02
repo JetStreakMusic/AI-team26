@@ -37,12 +37,10 @@ enum Facing {
 public class Agent {
 	private static World world;
 	private static int score = 0;
-//	private static Facing direction;
 	
 	public Agent()
 	{
 		world = new World();
-//		direction = Facing.NORTH;
 	}
 	
 	//Returns a heuristic of 0
@@ -75,6 +73,7 @@ public class Agent {
 		return verticalDist + horizontalDist;
 	}
 	
+	//Similar to heuristic 4, but turning adds 1 to the heuristic cost
 	public static int heuristic5(Coordinate currCoordinate, Moveset move)
 	{
 		if (move != null && (move == Moveset.TURN_LEFT || move == Moveset.TURN_RIGHT)) {
@@ -91,9 +90,8 @@ public class Agent {
 	}
 	
 	/*
-	 * astar
-	 * Should return something - probably a list of either Coordinates or moves
-	 * Track the # of nodes expanded somehow (visited nodes) - counter
+	 * A star implementation
+	 * Pass in the heuristic number, the starting coordinate and the goal coordinate
 	 */
 	public static void astar(int h, Coordinate start, Coordinate goal)
 	{
@@ -207,7 +205,6 @@ public class Agent {
 							nextDirection = Facing.NORTH; 
 					}
 					nextNode.setDirection(nextDirection);
-//					astar_direction.put(next, nextDirection);
 				}
 				else if (m == Moveset.BASH)
 				{
@@ -233,7 +230,7 @@ public class Agent {
 				new_cost = new_cost + world_cost;
 
 				// if next not in cost_so_far or new_cost < cost_so_far[next]:
-				// if ther's no cost known		of		new cost is better
+				// if there's no cost known		or		new cost is better
 				if (!(cost_so_far.containsKey(nextNode)) || new_cost < cost_so_far.get(nextNode))
 				{
 					
@@ -274,11 +271,9 @@ public class Agent {
 							heuristic_value = heuristic1();
 							break;
 						}
-					// add more for each heuristic
 					}
 					int priority = new_cost + heuristic_value;
 					
-//					PairComparable nextPair = new PairComparable(next, priority);
 					nextNode.setPriority(priority);
 					cost_so_far.put(nextNode, new_cost);
 					frontierQueue.add(nextNode);
@@ -288,6 +283,7 @@ public class Agent {
 			
 		}
 		
+		//Starting from the goal, loop back until you get the path to the start
 		Robot current = endNode;
 		ArrayList<Moveset> path = new ArrayList<Moveset>();
 		
@@ -295,14 +291,19 @@ public class Agent {
 		{
 			if(came_from.get(current) == null) {break;}
 			path.add(current.getLastMove());
-//			System.out.println(current.getPriority() + "\t" + "Coordinate: " + current.getCoordinate().getX() + ","+current.getCoordinate().getY());
 			current = came_from.get(current);
 		}
 		
 		Collections.reverse(path);
 		
+		int numTurns = 0;
+		for(Moveset m : path) {
+			if (m == Moveset.TURN_LEFT || m == Moveset.TURN_RIGHT) {numTurns++;}
+		}
+		
 		output.setTotalMoves(path);
 		output.setNumberOfMoves(path.size());
+		output.setNumTurns(numTurns);
 		output.setNodesExpanded(nodesExpanded);
 		output.print();
 	}
@@ -335,12 +336,13 @@ public class Agent {
         System.out.println("The total time needed to run was " + (totalTime/1000000000f) + " seconds");
         System.out.println("The total memory used was " + (actualMemUsed/Math.pow(1024, 3)) + " GB");
         
-//        makeFile(450, 450);
+//        makeFile(600, 600);
         
         //analysis
         System.out.println("End of Main");
     }
 	
+	//use to generate a text file with a board of given size
 	public static void makeFile(int row, int column) 
 	{
 		Random rand = new Random();
@@ -361,6 +363,7 @@ public class Agent {
 		}
 	}
 	
+	//helper function for generating boards
 	public static void generateWorld (String filename, int row, int column) throws IOException
 	{
 		char[][] array = new char[row][column];

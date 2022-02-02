@@ -2,6 +2,7 @@ import java.util.Comparator;
 
 public class RobotComparator implements Comparator<Robot> {
 
+	//Compare two Robots
 	@Override
 	public int compare(Robot node1, Robot node2)
 	{
