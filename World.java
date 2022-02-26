@@ -24,6 +24,7 @@ public class World {
 		return goal;
 	}
 	
+	//check whether a given coordinate is inside the world
 	public boolean insideBounds(Coordinate c)
 	{
 		boolean a = c.getX() >= 0 && c.getY() >= 0;
@@ -33,6 +34,8 @@ public class World {
 		boolean b =  c.getY()<width;
 		return (a && b && d);
 	}
+	
+	//initialize the array given the configuration file
 	public void setBoard(String input)
 	{
 		try {
@@ -88,6 +91,7 @@ public class World {
 		}
 	}
 
+	//print the array of the world
 	public void print() {
 	    for (int i = 0; i < worldAsArray.size(); i++) {
 	        for (int j = 0; j < worldAsArray.get(i).size(); j++) {
@@ -97,6 +101,7 @@ public class World {
 	    }
 	}
 	
+	//calculate the cost of a move
 	public int calculateGraphCost(Coordinate c, Moveset m)
 	{
 		if (m == Moveset.FORWARD)
@@ -115,10 +120,6 @@ public class World {
 		else if (m == Moveset.BASH)
 		{
 			return 3;
-		}
-		else if (m == Moveset.DEMOLISH)
-		{
-			return 4;
 		}
 		return 0;
 	}

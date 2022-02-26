@@ -5,28 +5,39 @@ public class Output {
 	private int numberOfMoves = 0;
 	private int nodesExpanded = 0;
 	private ArrayList<Moveset> totalMoves = new ArrayList<Moveset>();
+	private int numberOfTurns = 0;
 	
 	public void setScore(int n)
 	{
 		score = n;
 	}
+	
 	public void setNodesExpanded(int n)
 	{
 		nodesExpanded = n;
 	}
+	
 	public void setNumberOfMoves(int n)
 	{
 		numberOfMoves = n;
 	}
+	
 	public void setTotalMoves(ArrayList<Moveset> n)
 	{
 		totalMoves = n;
 	}
+	
+	public void setNumTurns(int n)
+	{
+		numberOfTurns = n;
+	}
+	
 	public void print()
 	{
-		//print all 4 of those values ^
+		//print all of those values ^
 		System.out.println("The score of the path found: " + score);
 		System.out.println("The number of actions required to reach the goal: " + numberOfMoves);
+//		System.out.println("The number of turns: " + numberOfTurns);
 		System.out.println("The number of nodes expanded: " + nodesExpanded);
 		System.out.println("The series of actions: ");
 		for (Moveset move : totalMoves)
